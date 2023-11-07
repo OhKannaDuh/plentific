@@ -67,7 +67,6 @@ final class Api implements ApiInterface
 
     public function getUserIndexPaginator(UserIndexRequest $request): LengthAwarePaginator
     {
-
         $response = $this->client->send($request);
         $indexResponse = UserIndexResponse::fromGuzzleResponse($response);
 
