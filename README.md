@@ -86,3 +86,25 @@ These are some other tools I usually include in other projects but didn't here d
 - PHPStan https://phpstan.org/
 
 - Infection https://infection.github.io/
+
+# Design
+
+I just wanted to make some remarks on the design of this library.
+
+## The flow
+
+This is pretty simple, you create an instance of the API class and send it specified request objects for the different calls, which were get user, get paginated user index, and create user. I would have had these return the responses directly and allowed the user to work with it as they require, but that would have gone against spec.
+
+## The requests
+
+You instantiate a request with their required parameters, which except the `UserIndexRequest` is all of them. The `UserIndexRequest` allows two optional parameters `page` and `per_page`, which allow the user to manipulate the request as needed. I think I would change `UserIndexRequest` to `GetUserIndexRequest` so it matches the other requests if I were to make more changes here.
+
+## The responses
+
+I'm pretty with how the responses came out. We promote a response we get from Guzzle into a specified response for a given request. i.e. A response for `GetUserRequest` will be promoted to a `GetUserResponse`. This allows us to validate the data on a case-by-case basis, in an extensible way.
+
+One potential issue here is that if the body in the response isn't valid JSON, then we'd get a runtime error because a null is provided when an array is expected. This would be very easy to fix, we could just make this an array if it becomes null after parsing the JSON. Then the validator would pick up and report on the missing data.
+
+## The API
+
+I don't have much to say about this, it exposes a few methods that require specific request types to call. This ensures we get the data we need for a given endpoint/call. I already touched on this but I would have had these return the responses directly, to allow more freedom with data. In that case, the logic that creates the paginator in `Api::getUserIndexPaginator` would have been moved to the response class.
