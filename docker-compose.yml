@@ -1,0 +1,8 @@
+services:
+  users-cli:
+    container_name: users-cli
+    build: .
+    volumes:
+      - '.:/app'
+    stdin_open: true
+    tty: true
